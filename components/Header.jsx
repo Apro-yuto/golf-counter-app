@@ -7,12 +7,11 @@ import {
 import {isLastHole} from '../partials/counter';
 import Hamburger from './Hamburger';
 
-const Header = ({hole, isOpen, setIsOpen, isHoleout, resetScore}) => {
-  const switchHeaderView = () => isLastHole(hole) && isHoleout;
+const Header = ({hole, isOpen, setIsOpen, resetScore, isDisplayResult}) => {
   return (
     <View style={styles.header}>
       {
-        !switchHeaderView() ? (
+        !isDisplayResult ? (
           <>
             <Text>
               <Text style={styles.holeNumber}>{hole}</Text>

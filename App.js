@@ -1,5 +1,4 @@
-import React, {useState, useEffect, useMemo, useCallback} from 'react';
-import type {Node} from 'react';
+import React, {useState} from 'react';
 import {
   TouchableOpacity,
   SafeAreaView,
@@ -7,43 +6,41 @@ import {
   Text,
   View,
 } from 'react-native';
-import Counter from './hooks/counter'
+import Counter from './hooks/counter';
 import Header from './components/Header';
 import HitContent from './components/HitContent';
 import ParContent from './components/ParContent';
 import ResultScoreModal from './components/ResultScoreModal';
 import ScoreBoardModal from './components/ScoreBoardModal';
 
-const App: () => Node = () => {
+const App = () => {
   const {
-    hole,
-    setHole,
+    scoreBoard,
     currentScore,
     currentScoreString,
+    currentHole,
     onHitChange,
     onParChange,
-    scoreBoard,
     onNextHole,
-    initScoreBoard,
+    resetScore,
   } = Counter();
+
   const [isScoreOpen, setIsScoreOpen] = useState(false);
-  const [isHoleOpen, setIsHoleOpen] = useState(false);
+  const [isHoleResultOpen, setIsHoleResultOpen] = useState(false);
   const [isResultOpen, setIsResultOpen] = useState(false);
-  const resetScore = () => {
-    initScoreBoard();
-    setHole(1);
+  const resetModal = () => {
+    setIsHoleResultOpen(false);
     setIsResultOpen(false);
-    setIsHoleOpen(false);
   };
 
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
       <Header
-        hole={hole}
+        hole={currentHole}
         isOpen={isScoreOpen}
         setIsOpen={setIsScoreOpen}
-        isHoleout={isHoleOpen}
-        resetScore={resetScore}
+        resetScore={() => resetScore(resetModal)}
+        isDisplayResult={isResultOpen}
       />
 
       <View style={styles.sectionContainer}>
@@ -54,16 +51,16 @@ const App: () => Node = () => {
 
         <TouchableOpacity
           style={styles.holeOutButton}
-          onPress={() => setIsHoleOpen(true)}>
+          onPress={() => setIsHoleResultOpen(true)}>
           <Text style={styles.holeOutText}>ホールアウト</Text>
         </TouchableOpacity>
 
         <ResultScoreModal
           currentScoreString={currentScoreString}
-          hole={hole}
-          isOpen={isHoleOpen}
+          hole={currentHole}
+          isOpen={isHoleResultOpen}
           setIsResultOpen={setIsResultOpen}
-          onNextHole={() => onNextHole(setIsHoleOpen(false))}
+          onNextHole={() => onNextHole(setIsHoleResultOpen(false))}
         />
         <ScoreBoardModal
           scoreBoard={scoreBoard}

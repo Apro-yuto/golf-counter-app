@@ -15,15 +15,15 @@ const ResultScoreModal = ({currentScoreString, hole, isOpen, onNextHole, setIsRe
         {
           !isLastHole(hole) ? (
             <TouchableOpacity
-              style={styles.holeOutButton}
+              style={styles.modalButton}
               onPress={onNextHole}>
-              <Text style={styles.holeOutText}>次のホールへ</Text>
+              <Text style={styles.modalText}>次のホールへ</Text>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              style={styles.holeOutButton}
+              style={styles.modalButton}
               onPress={() => setIsResultOpen(true)}>
-              <Text style={styles.holeOutText}>スコア確認</Text>
+              <Text style={styles.modalText}>スコア確認</Text>
             </TouchableOpacity>
           )
         }
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 150
   },
-  holeOutButton: {
+  modalButton: {
     width: 250,
     paddingTop: 15,
     paddingBottom: 15,
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
     marginRight: 'auto',
   },
-  holeOutText: {
+  modalText: {
     color: '#000',
     fontSize: 30,
     fontWeight: '700',

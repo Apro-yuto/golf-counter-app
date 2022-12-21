@@ -1,3 +1,5 @@
+import {LIMIT_HOLE_COUNT} from '../constants';
+
 export const canEditHitCount = hitCount => {
   return hitCount >= 0 && hitCount <= 99;
 };
@@ -7,5 +9,5 @@ export const canEditParCount = parCount => {
 };
 
 export const isLastHole = holeCount => {
-  return holeCount === 18;
+  return holeCount === LIMIT_HOLE_COUNT;
 };

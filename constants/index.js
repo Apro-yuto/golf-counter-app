@@ -41,6 +41,9 @@ export const SCORE = [
   },
 ]
 
+export const LIMIT_HOLE_COUNT = 18;
+
 export default {
   SCORE,
+  LIMIT_HOLE_COUNT,
 }

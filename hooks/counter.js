@@ -1,54 +1,48 @@
 import {useState, useEffect, useCallback, useMemo} from 'react';
 import {canEditHitCount, canEditParCount} from '../partials/counter';
-import {SCORE} from '../constants';
-
-// 残タスク
-// ・リファクタリング - Qiita
-// ・JSDoc - Qiita
-// ・ボタンコンポーネント欲しい
-// ・編集機能
-// ・GPS機能
+import {LIMIT_HOLE_COUNT, SCORE} from '../constants';
+import {generateScoreString} from '../partials';
 
 const Counter = () => {
-  const limitGameCount = 18;
   let [scoreBoard, setScore] = useState([]);
-  let [hole, setHole] = useState(1);
-  let [hitCount, setHitCount] = useState(1);
+  let [currentHole, setHole] = useState(1);
+  let [hitCount, _] = useState(1);
 
   // useMemo
   // 現在のスコア
   const currentScore = useMemo(() => {
-    return scoreBoard.find(item => item.id === hole);
-  }, [scoreBoard, hole]);
+    return scoreBoard.find(item => item.id === currentHole);
+  }, [scoreBoard, currentHole]);
 
   // 現在のスコア(文字列)
   const currentScoreString = useMemo(() => {
-    const currentScoreBoard = scoreBoard.find(item => item.id === hole);
+    const currentScoreBoard = scoreBoard.find(item => item.id === currentHole);
     const resultScore = SCORE.find(
       item =>
         item.score === currentScoreBoard?.hitCount - currentScoreBoard?.par,
     );
-    return `${resultScore?.name ?? ''}${resultScore?.score <= 0 ? '!!!' : '...'}`;
-  }, [hole, scoreBoard]);
+    return generateScoreString(resultScore);
+  }, [currentHole, scoreBoard]);
 
   // useCallback
-  const generateUpdatedScore = useCallback(
+  // 現在のスコア(文字列)
+  const generateUpdateScore = useCallback(
     updateValue => {
       return scoreBoard.map(item => {
-        if (item.id !== hole) return item;
+        if (item.id !== currentHole) return item;
         return {
           ...item,
           ...updateValue,
         };
       });
     },
-    [scoreBoard, hole],
+    [scoreBoard, currentHole],
   );
   const onScoreCountChange = useCallback(
     updateValue => {
-      setScore(generateUpdatedScore(updateValue));
+      setScore(generateUpdateScore(updateValue));
     },
-    [setScore, generateUpdatedScore],
+    [setScore, generateUpdateScore],
   );
   const onHitChange = useCallback(
     (direction = 1) => {
@@ -68,18 +62,18 @@ const Counter = () => {
   );
   const onNextHole = useCallback(
     afterProcess => {
-      setHole(hole + 1);
+      setHole(currentHole + 1);
       if (!afterProcess) {
         return;
       }
       afterProcess();
     },
-    [hole, setHole],
+    [currentHole, setHole],
   );
 
-  const initScoreBoard = () => {
+  const initScoreBoard = useCallback(() => {
     let scoreBoardArr = [];
-    for (let i = 1; i <= limitGameCount; i++) {
+    for (let i = 1; i <= LIMIT_HOLE_COUNT; i++) {
       scoreBoardArr.push({
         id: i,
         hitCount: 0,
@@ -87,25 +81,32 @@ const Counter = () => {
       });
     }
     setScore([...scoreBoardArr]);
-  };
+  }, []);
+
+  const resetScore = useCallback(
+    afterProcess => {
+      initScoreBoard();
+      setHole(1);
+
+      afterProcess();
+    },
+    [initScoreBoard],
+  );
 
   // useEffect
   useEffect(() => {
     // スコアボードの初期化
     initScoreBoard();
-  }, []);
+  }, [initScoreBoard]);
   return {
     scoreBoard,
-    setScore,
-    hole,
-    setHole,
-    hitCount,
+    currentHole,
     currentScore,
     currentScoreString,
     onHitChange,
     onParChange,
     onNextHole,
-    initScoreBoard,
+    resetScore,
   };
 };
 
